@@ -1,3 +1,6 @@
+const Scoreboard = require('./scoreboard.js');
+const scoreboard = new Scoreboard;
+
 const connection = (server) => {
   const io = require('socket.io').listen(server);
 
@@ -32,10 +35,9 @@ const connection = (server) => {
       } else {
         scores[name] = 1;
       }
-      // players[id].score++;
 
       // ***MAKE DATABASE CALL HERE*** //
-
+      scoreboard.putScore()
 
       // create new random egg position
       egg.x = Math.floor(Math.random() * canvas.x) + 50;
@@ -80,8 +82,15 @@ const connectPlayer = (socket) => {
     score: 0
   }
 
+  scoreboard.newPig({
+    _id: playerObj.playerId,
+    name: playerObj.name,
+    score: 0
+  });
+
   players[id] = playerObj;
   socket.emit('currentPlayers', players);
+  socket.emit('scoreUpdate')
   socket.emit('eggLocation', egg)
   socket.broadcast.emit('newPlayer', players[id]);
 }
