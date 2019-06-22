@@ -69,8 +69,12 @@ function create() {
 }
 
 function update() {
-  if (this.pig) {
 
+  // #################################
+  // Handling our own piggy's movement
+  // #################################
+
+  if (this.pig) {
     // Handle rotation
     if (this.cursors.left.isDown) {
       this.pig.setAngularVelocity(-150);
@@ -87,10 +91,33 @@ function update() {
       this.pig.setAcceleration(0);
     }
 
-    // If the pig exits screen, it appears on the other side
+    // If the pig exits screen, it appears on the other side. Wrap is not a function though. So, I do not know how to reslves this...
+    // this.physics.world.wrap(this.pig, 5);
+
+  // ##############################################
+  // Emitting our movement for other piggies to see
+  // ##############################################
+
+    const x = this.pig.x;
+    const y = this.pig.y;
+    const r = this.pig.rotation;
+    const checkPosChange = () => x !== this.pig.oldPosition.x || y !== this.pig.oldPosition.y || r !== this.pig.oldPosition.rotation;
+
+    if (this.pig.oldPosition && checkPosChange()) {
+      this.socket.emit('playerMovement', {
+        x: this.pig.x,
+        y: this.pig.y,
+        rotation: this.pig.rotation
+      });
+    }
+
+    this.pig.oldPosition = {
+      x: this.pig.x,
+      y: this.pig.y,
+      rotation : this.pig.rotation
+    }
     
-  }
-  this.physics.world.wrap(this.pig, 5);
+  } // END if (this.pig)
 }
 
 const addSelf = (self, playerInfo) => {
