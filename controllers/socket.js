@@ -1,5 +1,4 @@
-const Scoreboard = require('./scoreboard.js');
-const scoreboard = new Scoreboard;
+const scoreboard = require('./scoreboard.js');
 
 const connection = (server) => {
   const io = require('socket.io').listen(server);
@@ -28,7 +27,6 @@ const connection = (server) => {
       // increment player's score
       const { id } = socket;
       const name = players[id].name;
-      console.log(name)
       
       if (scores.hasOwnProperty(name)) {
         scores[name]++;
@@ -36,14 +34,22 @@ const connection = (server) => {
         scores[name] = 1;
       }
 
-      // ***MAKE DATABASE CALL HERE*** //
-      scoreboard.putScore()
-
-      // create new random egg position
+      // emit new random egg position
       egg.x = Math.floor(Math.random() * canvas.x) + 50;
       egg.y = Math.floor(Math.random() * canvas.y) + 50;
       io.emit('eggLocation', egg);
-      io.emit('scoreUpdate', scores)
+
+      // Update Database, 
+      // then get newest scoreboard, 
+      // then broadcast newest scoreboard
+      const putQuery = { _id: id, name: name, scores: scores[name] }
+      // console.log(putQuery)
+      scoreboard.putPig(putQuery)
+        .then(() => scoreboard.getPigs())
+        .then(latestScores => {
+          scores = latestScores 
+          io.emit('scoreUpdate', scores)
+        });
     });
 
   });
@@ -68,7 +74,7 @@ let egg = {
 };
 
 
-let scores = {};
+let scores = [];
 
 const connectPlayer = (socket) => {
   const id = socket.id;
@@ -86,11 +92,13 @@ const connectPlayer = (socket) => {
     _id: playerObj.playerId,
     name: playerObj.name,
     score: 0
-  });
+  })
+    .then(() =>scoreboard.getPigs())
+    .then(latestScores => scores = latestScores)
 
   players[id] = playerObj;
   socket.emit('currentPlayers', players);
-  socket.emit('scoreUpdate')
+  socket.emit('scoreUpdate', scores)
   socket.emit('eggLocation', egg)
   socket.broadcast.emit('newPlayer', players[id]);
 }
