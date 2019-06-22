@@ -38,6 +38,7 @@ function preload() {
 function create() {  
   const self = this;
   this.socket = io();
+  this.otherPlayers = this.physics.add.group();
   this.cursors = this.input.keyboard.createCursorKeys();
 
   // Load current players, map over players and paint.
@@ -66,7 +67,18 @@ function create() {
     });
   });
 
+  // When other players move, update there position and rotation
+  this.socket.on('playerMoved', (playerInfo) => {
+    self.otherPlayers.getChildren().forEach( otherPlayer => {
+      if (playerInfo.playerId === otherPlayer.playerId) {
+        otherPlayer.setRotation(playerInfo.rotation);
+        otherPlayer.setPosition(playerConfig.x, playerInfo.y);
+      }
+    })
+  });
+
 }
+
 
 function update() {
 
@@ -92,7 +104,6 @@ function update() {
     }
 
     // If the pig exits screen, it appears on the other side. Wrap is not a function though. So, I do not know how to reslves this...
-    console.log(this)
     // this.physics.world.wrap(this.pig, 5);
 
   // ##############################################
@@ -134,13 +145,14 @@ const addSelf = (self, playerInfo) => {
 }
 
 const addOtherPlayers = (self, playerInfo) => {
-  const otherPlayer = self.add.sprite(playerInfo.x, playerInfo.y, 'otherPlayer')
+  let otherPlayer = self.add.sprite(playerInfo.x, playerInfo.y, 'otherPlayer')
     .setOrigin(0.5, 0.5)
     .setDisplaySize(playerConfig.xSize, playerConfig.ySize);
   
-  playerInfo.team === 'blue' ? self.pig.setTint(playerConfig.blueColor) : self.pig.setTint(playerConfig.redColor);
+  playerInfo.team === 'blue' ? otherPlayer.setTint(playerConfig.blueColor) : otherPlayer.setTint(playerConfig.redColor);
 
   otherPlayer.playerId = playerInfo.playerId;
+  console.log(self)
   self.otherPlayers.add(otherPlayer);
 
 }
