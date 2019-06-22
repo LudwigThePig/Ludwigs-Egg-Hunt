@@ -3,15 +3,24 @@ const connection = (server) => {
 
   
   io.on('connection', (socket) => {
-    console.log('A user connected!')
+    console.log(`Pig ${socket.id} connected!`)
     connectPlayer(socket);
-    console.log(players)
-    
+
     socket.on('disconnect', () => {
       console.log('user disconnected'); 
       const { id } = socket;
       delete players[id]
-      io.emit('disconnect', id);
+      io.emit(`Pig ${socket.id} disconnected!`);
+    });
+
+    socket.on('playerMovement', (movementData) => {
+      const { id } = socket;
+      players[id].x = movementData.x;
+      players[id].y = movementData.y;
+      players[id].rotation = movementData.rotation;
+      console.log(players[id])
+
+      socket.broadcast.emit('playerMoved', players[id])
     });
     
   });
@@ -34,6 +43,5 @@ const connectPlayer = (socket) => {
   socket.emit('currentPlayers', players)
   socket.broadcast.emit('newPlayer', players[id])
 }
-
 
 module.exports = connection;

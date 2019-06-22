@@ -92,6 +92,7 @@ function update() {
     }
 
     // If the pig exits screen, it appears on the other side. Wrap is not a function though. So, I do not know how to reslves this...
+    console.log(this)
     // this.physics.world.wrap(this.pig, 5);
 
   // ##############################################
@@ -116,7 +117,7 @@ function update() {
       y: this.pig.y,
       rotation : this.pig.rotation
     }
-    
+
   } // END if (this.pig)
 }
 
