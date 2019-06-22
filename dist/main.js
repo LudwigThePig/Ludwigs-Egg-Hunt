@@ -6,7 +6,6 @@ const playerConfig = {
   drag: 100,
   angularDrag: 100,
   maxVelocity: 200,
-
 }
 
 
@@ -39,6 +38,7 @@ function preload() {
 function create() {  
   const self = this;
   this.socket = io();
+  this.cursors = this.input.keyboard.createCursorKeys();
 
   // Load current players, map over players and paint.
   this.socket.on('currentPlayers', (players) => {
@@ -68,7 +68,30 @@ function create() {
 
 }
 
-function update() {}
+function update() {
+  if (this.pig) {
+
+    // Handle rotation
+    if (this.cursors.left.isDown) {
+      this.pig.setAngularVelocity(-150);
+    } else if (this.cursors.right.isDown) {
+      this.pig.setAngularVelocity(150)
+    } else {
+      this.pig.setAngularVelocity(0)
+    }
+
+    // Handle acceleration
+    if (this.cursors.up.isDown) {
+      this.physics.velocityFromRotation(this.pig.rotation + 1.5, 100, this.pig.body.acceleration);
+    } else {
+      this.pig.setAcceleration(0);
+    }
+
+    // If the pig exits screen, it appears on the other side
+    
+  }
+  this.physics.world.wrap(this.pig, 5);
+}
 
 const addSelf = (self, playerInfo) => {
 
@@ -77,9 +100,9 @@ const addSelf = (self, playerInfo) => {
     .setDisplaySize(playerConfig.xSize, playerConfig.ySize);
 
   playerInfo.team === 'blue' ? self.pig.setTint(playerConfig.blueColor) : self.pig.setTint(playerConfig.redColor);
-  self.pig.setDrag(100);
-  self.pig.setAngularDrag(100);
-  self.pig.setMaxVelocity(200);
+  self.pig.setDrag(playerConfig.drag);
+  self.pig.setAngularDrag(playerConfig.angularDrag);
+  self.pig.setMaxVelocity(playerConfig.maxVelocity);
 }
 
 const addOtherPlayers = (self, playerInfo) => {
