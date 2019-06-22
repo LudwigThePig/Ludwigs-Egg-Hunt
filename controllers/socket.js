@@ -21,25 +21,57 @@ const connection = (server) => {
       socket.broadcast.emit('playerMoved', players[id])
     });
     
+    socket.on('eggCollected', () => {
+      // increment player's score
+      const { id } = socket;
+      players[id].score++;
+      console.log(players[id].score)
+
+      // Make database call
+
+
+      // create new random egg position
+      egg.x = Math.floor(Math.random() * canvas.x) + 50;
+      egg.y = Math.floor(Math.random() * canvas.y) + 50;
+      io.emit('eggLocation', egg);
+      io.emit('scoreUpdate', scores)
+    })
+
   });
 }
 
+const canvas = {
+  x: 1300,
+  y: 500
+};
+
 let players = {};
+
+let egg = {
+  x: Math.floor(Math.random() * canvas.x) + 50,
+  y: Math.floor(Math.random() * canvas.y) + 50,
+};
+
+let scores = Object.keys(players).map( player => {
+  const { score} = players[player];
+  return { player: score}
+})
 
 const connectPlayer = (socket) => {
   const id = socket.id;
   
   const playerObj = {
     rotation: 0, 
-    x: Math.floor(Math.random() * 700) + 50,
-    y: Math.floor(Math.random() * 500) + 50,
+    x: Math.floor(Math.random() * canvas.x) + 50,
+    y: Math.floor(Math.random() * canvas.y) + 50,
     playerId: id,
     score: 0
   }
 
   players[id] = playerObj;
-  socket.emit('currentPlayers', players)
-  socket.broadcast.emit('newPlayer', players[id])
+  socket.emit('currentPlayers', players);
+  socket.emit('eggLocation', egg)
+  socket.broadcast.emit('newPlayer', players[id]);
 }
 
 module.exports = connection;
