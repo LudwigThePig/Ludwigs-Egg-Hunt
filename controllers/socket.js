@@ -24,10 +24,16 @@ const connection = (server) => {
     socket.on('eggCollected', () => {
       // increment player's score
       const { id } = socket;
-      players[id].score++;
-      console.log(players[id].score)
 
-      // Make database call
+      if (scores.hasOwnProperty(id)) {
+        scores[id]++;
+      } else {
+        scores[id] = 1;
+      }
+      // players[id].score++;
+      console.log(scores[id])
+
+      // ***MAKE DATABASE CALL HERE*** //
 
 
       // create new random egg position
@@ -52,10 +58,12 @@ let egg = {
   y: Math.floor(Math.random() * canvas.y) + 50,
 };
 
-let scores = Object.keys(players).map( player => {
-  const { score} = players[player];
-  return { player: score}
-})
+
+let scores = {};
+// let scores = Object.keys(players).map( player => {
+//   const { score} = players[player];
+//   return { player: score}
+// })
 
 const connectPlayer = (socket) => {
   const id = socket.id;

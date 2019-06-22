@@ -38,6 +38,7 @@ const game = new Phaser.Game(config);
 function preload() {
   this.load.image('pig', './assets/pig-player.png');
   this.load.image('otherPlayer', './assets/pig-player.png');
+  this.load.image('egg', './assets/egg.jpg')
 }
 
 function create() {  
@@ -82,6 +83,21 @@ function create() {
       }
     })
   });
+
+  this.leaderText = this.add.text(16, 16, 'Oinkers!', { fontSize: '32px', fill: '#000'} );
+
+  this.socket.on('scoreUpdate', (scores) => {
+    if (Object.keys(scores).length > 0) {
+      const leader = Object.keys(scores).reduce( (lead, cur) => {
+        lead = scores[cur] > scores[lead] ? cur : lead;
+      });
+      console.log(scores, leader, scores[leader])
+      self.leaderText.setText(`${leader} is in the lead with ${scores[leader]} points`);
+    } else {
+      self.leaderText.setText(`Git sum eggs, oink`);
+    }
+  });
+
 
 }
 
