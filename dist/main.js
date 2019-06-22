@@ -70,11 +70,12 @@ function create() {
 
   // When other players move, update there position and rotation
   this.socket.on('playerMoved', (playerInfo) => {
-    console.log(self.otherPlayers)
+    console.log(self.otherPlayers.getChildren())
     self.otherPlayers.getChildren().forEach( otherPlayer => {
       if (playerInfo.playerId === otherPlayer.playerId) {
         otherPlayer.setRotation(playerInfo.rotation);
-        otherPlayer.setPosition(playerConfig.x, playerInfo.y);
+        con
+        otherPlayer.setPosition(playerInfo.x, playerInfo.y);
       }
     })
   });
