@@ -38,7 +38,7 @@ const game = new Phaser.Game(config);
 function preload() {
   this.load.image('pig', './assets/pig-player.png');
   this.load.image('otherPlayer', './assets/pig-player.png');
-  this.load.image('egg', './assets/egg.jpg')
+  this.load.image('egg', './assets/egg.png')
 }
 
 function create() {  
@@ -84,8 +84,9 @@ function create() {
     })
   });
 
-  this.leaderText = this.add.text(16, 16, 'Oinkers!', { fontSize: '32px', fill: '#000'} );
 
+  // Scoreboard
+  this.leaderText = this.add.text(16, 16, 'Git sum eggs, oink', { fontSize: '32px', fill: '#000', fontStyle: 'bold'} );
   this.socket.on('scoreUpdate', (scores) => {
     if (Object.keys(scores).length > 0) {
       const leader = Object.keys(scores).reduce( (lead, cur) => {
@@ -98,6 +99,16 @@ function create() {
     }
   });
 
+
+  this.socket.on('eggLocation', (eggLocation) => {
+    if (self.egg) {
+      self.egg.destroy();
+    }
+    self.egg = self.physics.add.image(eggLocation.x, eggLocation.y, 'egg');
+    self.physics.add.overlap(self.pig, self.egg, () => {
+      this.socket.emit('eggCollected');
+    }, null, self);
+  })
 
 }
 
