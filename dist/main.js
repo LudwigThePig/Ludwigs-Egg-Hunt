@@ -33,6 +33,7 @@ const game = new Phaser.Game(config);
 
 function preload() {
   this.load.image('pig', './assets/pig-player.png');
+  this.load.image('otherPlayer', './assets/pig-player.png');
 }
 
 function create() {  
@@ -69,6 +70,7 @@ function create() {
 
   // When other players move, update there position and rotation
   this.socket.on('playerMoved', (playerInfo) => {
+    console.log(self.otherPlayers)
     self.otherPlayers.getChildren().forEach( otherPlayer => {
       if (playerInfo.playerId === otherPlayer.playerId) {
         otherPlayer.setRotation(playerInfo.rotation);
@@ -103,8 +105,8 @@ function update() {
       this.pig.setAcceleration(0);
     }
 
-    // If the pig exits screen, it appears on the other side. Wrap is not a function though. So, I do not know how to reslves this...
-    // this.physics.world.wrap(this.pig, 5);
+    // If the pig exits screen, it appears on the other side.
+    this.physics.world.wrap(this.pig, 5);
 
   // ##############################################
   // Emitting our movement for other piggies to see
@@ -152,7 +154,6 @@ const addOtherPlayers = (self, playerInfo) => {
   playerInfo.team === 'blue' ? otherPlayer.setTint(playerConfig.blueColor) : otherPlayer.setTint(playerConfig.redColor);
 
   otherPlayer.playerId = playerInfo.playerId;
-  console.log(self)
   self.otherPlayers.add(otherPlayer);
 
 }
