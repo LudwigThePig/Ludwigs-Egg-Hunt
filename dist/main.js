@@ -1,8 +1,6 @@
 const playerConfig = {
   xSize: 100,
   ySize: 50,
-  blueColor: 0xFCD7DE,
-  redColor: 0x89cff0,
   drag: 100,
   angularDrag: 100,
   maxVelocity: 200,
@@ -14,7 +12,7 @@ const config = {
   parent: 'phaser-example',
   width: 1400,
   height: 600,
-  backgroundColor: '#7EC0EE',
+  backgroundColor: '#B1EDE8',
   physics: {
       default: 'arcade',
       arcade: {
@@ -28,6 +26,12 @@ const config = {
       update: update
   }
 };
+
+const randomColor = () => {
+  const colors = [0xFF6978, 0xfffcf9, 0x6D435A, 0x352d39];
+  const randomInt = Math.floor(Math.random() * colors.length)
+  return colors[randomInt];
+}
 
 const game = new Phaser.Game(config);
 
@@ -140,7 +144,7 @@ const addSelf = (self, playerInfo) => {
     .setOrigin(0.5, 0.5)
     .setDisplaySize(playerConfig.xSize, playerConfig.ySize);
 
-  playerInfo.team === 'blue' ? self.pig.setTint(playerConfig.blueColor) : self.pig.setTint(playerConfig.redColor);
+  self.pig.setTint(randomColor());
   self.pig.setDrag(playerConfig.drag);
   self.pig.setAngularDrag(playerConfig.angularDrag);
   self.pig.setMaxVelocity(playerConfig.maxVelocity);
@@ -151,7 +155,7 @@ const addOtherPlayers = (self, playerInfo) => {
     .setOrigin(0.5, 0.5)
     .setDisplaySize(playerConfig.xSize, playerConfig.ySize);
   
-  playerInfo.team === 'blue' ? otherPlayer.setTint(playerConfig.blueColor) : otherPlayer.setTint(playerConfig.redColor);
+  otherPlayer.setTint(randomColor());
 
   otherPlayer.playerId = playerInfo.playerId;
   self.otherPlayers.add(otherPlayer);

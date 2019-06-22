@@ -3,7 +3,7 @@
 body{
   margin: 0;
   font-family: 'Roboto', sans-serif;
-  background: #7CFC00;
+  background: #36382E;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -12,4 +12,8 @@ body{
 
 canvas{
   margin: auto;
+}
+
+h1{
+  color: white;
 }

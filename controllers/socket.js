@@ -18,8 +18,6 @@ const connection = (server) => {
       players[id].x = movementData.x;
       players[id].y = movementData.y;
       players[id].rotation = movementData.rotation;
-      console.log(players[id])
-
       socket.broadcast.emit('playerMoved', players[id])
     });
     
@@ -36,7 +34,7 @@ const connectPlayer = (socket) => {
     x: Math.floor(Math.random() * 700) + 50,
     y: Math.floor(Math.random() * 500) + 50,
     playerId: id,
-    team: (Math.floor(Math.random() * 2) === 0) ? 'red' : 'blue'
+    score: 0
   }
 
   players[id] = playerObj;
