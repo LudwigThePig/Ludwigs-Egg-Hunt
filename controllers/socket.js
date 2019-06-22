@@ -25,14 +25,17 @@ const connection = (server) => {
     
     socket.on('eggCollected', () => {
       // increment player's score
-      const { id } = socket;
+      const id = socket.id;
+      console.log(id)
       const name = players[id].name;
       
-      if (scores.hasOwnProperty(name)) {
-        scores[name]++;
-      } else {
-        scores[name] = 1;
-      }
+      // const newScore = scores.filter(pig => pig.name == name);
+      // console.log(newScore);
+      // if (scores.hasOwnProperty(name)) {
+      //   scores[name]++;
+      // } else {
+      //   scores[name] = 1; 
+      // }
 
       // emit new random egg position
       egg.x = Math.floor(Math.random() * canvas.x) + 50;
@@ -42,7 +45,7 @@ const connection = (server) => {
       // Update Database, 
       // then get newest scoreboard, 
       // then broadcast newest scoreboard
-      const putQuery = { _id: id, name: name, scores: scores[name] }
+      const putQuery = { _id: id }//, name: name, scores: 1 }
       // console.log(putQuery)
       scoreboard.putPig(putQuery)
         .then(() => scoreboard.getPigs())
@@ -70,7 +73,7 @@ let players = {};
 
 let egg = {
   x: Math.floor(Math.random() * canvas.x) + 50,
-  y: Math.floor(Math.random() * canvas.y) + 50,
+  y: Math.floor(Math.random() * canvas.y) + 50, 
 };
 
 
@@ -89,18 +92,19 @@ const connectPlayer = (socket) => {
   }
 
   scoreboard.newPig({
-    _id: playerObj.playerId,
+    _id: id,
     name: playerObj.name,
     score: 0
   })
-    .then(() =>scoreboard.getPigs())
-    .then(latestScores => scores = latestScores)
-
-  players[id] = playerObj;
-  socket.emit('currentPlayers', players);
-  socket.emit('scoreUpdate', scores)
-  socket.emit('eggLocation', egg)
-  socket.broadcast.emit('newPlayer', players[id]);
+    .then(() =>  scoreboard.getPigs())
+    .then(latestScores => {
+      scores = latestScores;
+      players[id] = playerObj;
+      socket.emit('currentPlayers', players);
+      socket.emit('scoreUpdate', scores)
+      socket.emit('eggLocation', egg)
+      socket.broadcast.emit('newPlayer', players[id]);
+    });
 }
 
 module.exports = connection;

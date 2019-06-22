@@ -88,18 +88,11 @@ function create() {
   // Scoreboard
   this.leaderText = this.add.text(16, 16, 'Git sum eggs, oink', { fontSize: '32px', fill: '#000', fontStyle: 'bold'} );
   this.socket.on('scoreUpdate', (scores) => {
-    if (Object.keys(scores).length > 0) {
-      const leader = Object.keys(scores).reduce( (lead, cur) => {
-        lead = scores[cur] > scores[lead] ? cur : lead;
-      });
-      console.log(scores, leader, scores[leader])
-      self.leaderText.setText(`${leader} is in the lead with ${scores[leader]} points`);
-    } else {
-      self.leaderText.setText(`Git sum eggs, oink`);
-    }
+      self.leaderText.setText(`${scores[0].name} is in the lead with ${scores[0].score} points`);
   });
 
 
+  // New location for our egg
   this.socket.on('eggLocation', (eggLocation) => {
     if (self.egg) {
       self.egg.destroy();
