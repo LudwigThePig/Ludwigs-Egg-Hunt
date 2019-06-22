@@ -4,8 +4,7 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "start": "nodemon server.js",
-    "build": "tsc"
+    "start": "nodemon server.js"
   },
   "repository": {
     "type": "git",
@@ -22,10 +21,6 @@
     "express": "^4.17.1",
     "mongodb": "^3.2.7",
     "mongoose": "^5.6.0",
-    "socketio": "^1.0.0",
-    "typescript": "^3.5.2"
-  },
-  "devDependencies": {
-    "tslint": "^5.18.0"
+    "socketio": "^1.0.0"
   }
 }
