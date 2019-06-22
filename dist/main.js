@@ -84,11 +84,35 @@ function create() {
     })
   });
 
+  this.yourPiggy = this.add.text(1150, 16, ``, { fontSize: '24px', fill: '#36393B', fontStyle: 'bold'})
 
   // Scoreboard
-  this.leaderText = this.add.text(16, 16, 'Git sum eggs, oink', { fontSize: '32px', fill: '#000', fontStyle: 'bold'} );
+  this.leaderText = this.add.text(16, 16, 'Git sum eggs, oink', { fontSize: '20px', fill: '#69140E', fontStyle: 'bold'} );
+
+  // this is absolutely awful and I am very ashamed that I could not find a better solution...
+  this.second = this.add.text(16, 40, '', {fill: '#000', fontStyle: 'bold'});
+  this.third = this.add.text(16, 60, '', {fill: '#000', fontStyle: 'bold'});
+  this.fourth = this.add.text(16, 80, '', {fill: '#000', fontStyle: 'bold'});
+  this.fifth = this.add.text(16, 100, '', {fill: '#000', fontStyle: 'bold'});
+  this.sixth = this.add.text(16, 120, '', {fill: '#000', fontStyle: 'bold'});
+  this.seventh = this.add.text(16, 140, '', {fill: '#000', fontStyle: 'bold'});
+  this.eigth = this.add.text(16, 160, '', {fill: '#000', fontStyle: 'bold'});
+  this.nineth = this.add.text(16, 180, '', {fill: '#000', fontStyle: 'bold'});
+  this.tenth = this.add.text(16, 200, '', {fill: '#000', fontStyle: 'bold'});
+
+  console.log(self)
   this.socket.on('scoreUpdate', (scores) => {
-      self.leaderText.setText(`${scores[0].name} is in the lead with ${scores[0].score} points`);
+    self.yourPiggy.setText(`You are\n${self.pig.name}`)
+    self.leaderText.setText(`${scores[0].name} is in the lead with ${scores[0].score} points`);
+    self.second.setText(`2. ${scores[1].name}: ${scores[1].score}`);
+    self.third.setText(`3. ${scores[2].name}: ${scores[2].score}`);
+    self.fourth.setText(`4. ${scores[3].name}: ${scores[3].score}`);
+    self.fifth.setText(`5. ${scores[4].name}: ${scores[4].score}`);
+    self.sixth.setText(`6. ${scores[5].name}: ${scores[5].score}`);
+    self.seventh.setText(`7. ${scores[6].name}: ${scores[6].score}`);
+    self.eigth.setText(`8. ${scores[7].name}: ${scores[7].score}`);
+    self.nineth.setText(`9. ${scores[8].name}: ${scores[8].score}`);
+    self.tenth.setText(`10. ${scores[9].name}: ${scores[9].score}`);
   });
 
 
@@ -163,7 +187,7 @@ const addSelf = (self, playerInfo) => {
   self.pig = self.physics.add.image(playerInfo.x, playerInfo.y, 'pig')
     .setOrigin(0.5, 0.5)
     .setDisplaySize(playerConfig.xSize, playerConfig.ySize);
-
+  self.pig.name = playerInfo.name;
   self.pig.setTint(randomColor());
   self.pig.setDrag(playerConfig.drag);
   self.pig.setAngularDrag(playerConfig.angularDrag);
