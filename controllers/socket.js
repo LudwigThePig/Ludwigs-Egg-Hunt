@@ -7,10 +7,10 @@ const connection = (server) => {
     connectPlayer(socket);
 
     socket.on('disconnect', () => {
-      console.log('user disconnected'); 
+      console.log(`Pig ${socket.id} disconnected!`); 
       const { id } = socket;
       delete players[id]
-      io.emit(`Pig ${socket.id} disconnected!`);
+      io.emit('disconnect', id);
     });
 
     socket.on('playerMovement', (movementData) => {

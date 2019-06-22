@@ -12,7 +12,7 @@ const playerConfig = {
 const config = {
   type: Phaser.AUTO,
   parent: 'phaser-example',
-  width: 800,
+  width: 1400,
   height: 600,
   backgroundColor: '#7EC0EE',
   physics: {
@@ -60,7 +60,7 @@ function create() {
   });
 
   // When a player disconnects, remove them
-  this.socket.on('discconect', playerId => {
+  this.socket.on('disconnect', playerId => {
     self.otherPlayers.getChildren().forEach( otherPlayer => {
       if (playerId === otherPlayer.playerId) {
         otherPlayer.destroy();
@@ -74,7 +74,6 @@ function create() {
     self.otherPlayers.getChildren().forEach( otherPlayer => {
       if (playerInfo.playerId === otherPlayer.playerId) {
         otherPlayer.setRotation(playerInfo.rotation);
-        con
         otherPlayer.setPosition(playerInfo.x, playerInfo.y);
       }
     })
