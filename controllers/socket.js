@@ -24,14 +24,15 @@ const connection = (server) => {
     socket.on('eggCollected', () => {
       // increment player's score
       const { id } = socket;
-
-      if (scores.hasOwnProperty(id)) {
-        scores[id]++;
+      const name = players[id].name;
+      console.log(name)
+      
+      if (scores.hasOwnProperty(name)) {
+        scores[name]++;
       } else {
-        scores[id] = 1;
+        scores[name] = 1;
       }
       // players[id].score++;
-      console.log(scores[id])
 
       // ***MAKE DATABASE CALL HERE*** //
 
@@ -41,9 +42,15 @@ const connection = (server) => {
       egg.y = Math.floor(Math.random() * canvas.y) + 50;
       io.emit('eggLocation', egg);
       io.emit('scoreUpdate', scores)
-    })
+    });
 
   });
+}
+
+const randomPigName = () => {
+  const names = ['Chris P. Bacon', 'Piggie Smalls', 'Elvis Pigsley', 'Prince Hamlet', 'Ham Solo', 'Porkchop', 'Chewbacon', 'Big Belly Nelly', 'Kevin Bacon', 'Hogger', 'Harry Plopper', 'Sir Oinksalot']
+  const randomInt = Math.floor(Math.random() * names.length);
+  return names[randomInt];
 }
 
 const canvas = {
@@ -60,19 +67,16 @@ let egg = {
 
 
 let scores = {};
-// let scores = Object.keys(players).map( player => {
-//   const { score} = players[player];
-//   return { player: score}
-// })
 
 const connectPlayer = (socket) => {
   const id = socket.id;
   
   const playerObj = {
-    rotation: 0, 
+    rotation: 0,
     x: Math.floor(Math.random() * canvas.x) + 50,
     y: Math.floor(Math.random() * canvas.y) + 50,
     playerId: id,
+    name: randomPigName(),
     score: 0
   }
 
