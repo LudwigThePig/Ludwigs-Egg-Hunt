@@ -3,7 +3,7 @@
 body{
   margin: 0;
   font-family: 'Roboto', sans-serif;
-  background: #08A045;
+  background: #fff;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -15,5 +15,5 @@ canvas{
 }
 
 h1{
-  color: white;
+  color: #222;
 }

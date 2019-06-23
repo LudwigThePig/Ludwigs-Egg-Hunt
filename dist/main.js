@@ -49,7 +49,7 @@ function create() {
 
   // Display player count
   this.playersOnline = this.add.text(16, 570, `${this.otherPlayers.getChildren().length} pigs online`, {fontSize: '20px', fill: '#000'})
-  const getPlayerCount = () => this.playersOnline.setText(`${this.otherPlayers.getChildren().length + 1} pigs online`);
+  const getPlayerCount = () => this.playersOnline.setText(`${this.otherPlayers.getChildren().length + 1  } pigs online`);
   
   // Load current players, map over players and paint.
   this.socket.on('currentPlayers', (players) => {
@@ -181,6 +181,11 @@ function update() {
       });
     }
 
+    // set shadow position
+    this.shadow.x = this.pig.x;
+    this.shadow.y = this.pig.y;
+    this.shadow.rotation = this.pig.rotation;
+
     this.pig.oldPosition = {
       x: this.pig.x,
       y: this.pig.y,
@@ -193,18 +198,29 @@ function update() {
     // #####################################
     //  Handling Conflict with Other Piggies
     // #####################################
-    this.otherPlayers.getChildren().forEach( otherPlayer => {
-      this.physics.collide(self.pig, otherPlayer, () => {
-        this.physics.velocityFromRotation(0, 10000);
-      }, null, self);
-    });
+      // Too tricky for an MVP, may revist later
+    // this.otherPlayers.getChildren().forEach( otherPlayer => {
+    //   this.physics.overlap(self.pig, otherPlayer, () => {
+    //     console.log(this.pig)
+    //     this.pig.setAcceleration(-100); 
+    //   }, null, self);
+    // });
 }
 
 const addSelf = (self, playerInfo) => {
 
+  // Shadow for the piggy
+  self.shadow = self.physics.add.image(playerInfo.x, playerInfo.y, 'pig')
+    .setDisplaySize(playerConfig.xSize + 10, playerConfig.ySize + 10);
+  self.shadow.alpha = 0.6;
+  self.shadow.setTint(0x000000);
+
+
   self.pig = self.physics.add.image(playerInfo.x, playerInfo.y, 'pig')
     .setOrigin(0.5, 0.5)
     .setDisplaySize(playerConfig.xSize, playerConfig.ySize);
+
+
   self.pig.name = playerInfo.name;
   self.pig.setTint(randomColor());
   self.pig.setDrag(playerConfig.drag);
