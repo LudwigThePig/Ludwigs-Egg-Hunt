@@ -2,7 +2,6 @@ const scoreboard = require('./scoreboard.js');
 
 const connection = (server) => {
   const io = require('socket.io').listen(server);
-
   
   io.on('connection', (socket) => {
     console.log(`Pig ${socket.id} connected!`)
@@ -26,16 +25,8 @@ const connection = (server) => {
     socket.on('eggCollected', () => {
       // increment player's score
       const id = socket.id;
-      console.log(id)
-      const name = players[id].name;
+      // const name = players[id].name;
       
-      // const newScore = scores.filter(pig => pig.name == name);
-      // console.log(newScore);
-      // if (scores.hasOwnProperty(name)) {
-      //   scores[name]++;
-      // } else {
-      //   scores[name] = 1; 
-      // }
 
       // emit new random egg position
       egg.x = Math.floor(Math.random() * canvas.x) + 50;
@@ -46,7 +37,6 @@ const connection = (server) => {
       // then get newest scoreboard, 
       // then broadcast newest scoreboard
       const putQuery = { _id: id }//, name: name, scores: 1 }
-      // console.log(putQuery)
       scoreboard.putPig(putQuery)
         .then(() => scoreboard.getPigs())
         .then(latestScores => {
@@ -59,7 +49,7 @@ const connection = (server) => {
 }
 
 const randomPigName = () => {
-  const names = ['Chris P. Bacon', 'Piggie Smalls', 'Elvis Pigsley', 'Prince Hamlet', 'Ham Solo', 'Porkchop', 'Chewbacon', 'Big Belly Nelly', 'Kevin Bacon', 'Hogger', 'Harry Plopper', 'Sir Oinksalot']
+  const names = ['Chris P. Bacon', 'Piggie Smalls', 'Elvis Pigsley', 'Prince Hamlet', 'Ham Solo', 'Porkchop', 'Chewbacon', 'Big Belly Nelly', 'Kevin Bacon', 'Hogger', 'Harry Plopper', 'Sir Oinksalot', 'Napoleon', 'Jimmy Dean', 'Pjork', 'Inigo Hamtoya', 'Snoop Hoggy Hogg']
   const randomInt = Math.floor(Math.random() * names.length);
   return names[randomInt];
 }

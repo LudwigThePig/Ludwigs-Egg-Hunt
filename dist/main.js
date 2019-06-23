@@ -1,9 +1,9 @@
 const playerConfig = {
   xSize: 100,
   ySize: 50,
-  drag: 100,
-  angularDrag: 100,
-  maxVelocity: 200,
+  drag: 200,
+  angularDrag: 200, 
+  maxVelocity: 1000,
 }
 
 
@@ -72,16 +72,16 @@ function create() {
       }
     });
   });
+  console.log(self)
 
   // When other players move, update there position and rotation
   this.socket.on('playerMoved', (playerInfo) => {
-    console.log(self.otherPlayers.getChildren())
     self.otherPlayers.getChildren().forEach( otherPlayer => {
       if (playerInfo.playerId === otherPlayer.playerId) {
         otherPlayer.setRotation(playerInfo.rotation);
         otherPlayer.setPosition(playerInfo.x, playerInfo.y);
       }
-    })
+    });
   });
 
   this.yourPiggy = this.add.text(1150, 16, ``, { fontSize: '24px', fill: '#36393B', fontStyle: 'bold'})
@@ -100,7 +100,6 @@ function create() {
   this.nineth = this.add.text(16, 180, '', {fill: '#000', fontStyle: 'bold'});
   this.tenth = this.add.text(16, 200, '', {fill: '#000', fontStyle: 'bold'});
 
-  console.log(self)
   this.socket.on('scoreUpdate', (scores) => {
     self.yourPiggy.setText(`You are\n${self.pig.name}`)
     self.leaderText.setText(`${scores[0].name} is in the lead with ${scores[0].score} points`);
@@ -121,7 +120,7 @@ function create() {
     if (self.egg) {
       self.egg.destroy();
     }
-    self.egg = self.physics.add.image(eggLocation.x, eggLocation.y, 'egg');
+    self.egg = self.physics.add.image(eggLocation.x, eggLocation.y, 'egg')    .setDisplaySize(100, 100);
     self.physics.add.overlap(self.pig, self.egg, () => {
       this.socket.emit('eggCollected');
     }, null, self);
@@ -131,6 +130,7 @@ function create() {
 
 
 function update() {
+  let self = this;
 
   // #################################
   // Handling our own piggy's movement
@@ -148,7 +148,7 @@ function update() {
 
     // Handle acceleration
     if (this.cursors.up.isDown) {
-      this.physics.velocityFromRotation(this.pig.rotation + 1.5, 100, this.pig.body.acceleration);
+      this.physics.velocityFromRotation(this.pig.rotation, 100, this.pig.body.acceleration);
     } else {
       this.pig.setAcceleration(0);
     }
@@ -180,6 +180,18 @@ function update() {
     }
 
   } // END if (this.pig)
+
+
+  // #####################################
+  //  Handling Conflict with Other Piggies
+  // #####################################
+  this.otherPlayers.getChildren().forEach( otherPlayer => {
+    self.physics.overlap(self.pig, otherPlayer, () => {
+      this.physics.velocityFromRotation(this.pig.rotation, -20000, this.pig.body.acceleration);
+    }, null, self);
+  });
+
+
 }
 
 const addSelf = (self, playerInfo) => {
