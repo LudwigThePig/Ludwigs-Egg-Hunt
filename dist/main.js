@@ -47,6 +47,10 @@ function create() {
   this.otherPlayers = this.physics.add.group();
   this.cursors = this.input.keyboard.createCursorKeys();
 
+  // Display player count
+  this.playersOnline = this.add.text(16, 570, `${this.otherPlayers.getChildren().length} pigs online`, {fontSize: '20px', fill: '#000'})
+  const getPlayerCount = () => this.playersOnline.setText(`${this.otherPlayers.getChildren().length + 1} pigs online`);
+  
   // Load current players, map over players and paint.
   this.socket.on('currentPlayers', (players) => {
     Object.keys(players).forEach( id => {
@@ -56,13 +60,16 @@ function create() {
         addOtherPlayers(self, players[id])
       }
     });
+    getPlayerCount()
   });
 
 
   // When new player, add them to the list of current players
   this.socket.on('newPlayer', playerInfo => {
     addOtherPlayers(self, playerInfo);
+    getPlayerCount();
   });
+
 
   // When a player disconnects, remove them
   this.socket.on('disconnect', playerId => {
@@ -71,6 +78,7 @@ function create() {
         otherPlayer.destroy();
       }
     });
+    getPlayerCount();
   });
   console.log(self)
 
@@ -156,9 +164,9 @@ function update() {
     // If the pig exits screen, it appears on the other side.
     this.physics.world.wrap(this.pig, 5);
 
-  // ##############################################
-  // Emitting our movement for other piggies to see
-  // ##############################################
+    // ##############################################
+    // Emitting our movement for other piggies to see
+    // ##############################################
 
     const x = this.pig.x;
     const y = this.pig.y;
@@ -181,17 +189,15 @@ function update() {
 
   } // END if (this.pig)
 
-
-  // #####################################
-  //  Handling Conflict with Other Piggies
-  // #####################################
-  this.otherPlayers.getChildren().forEach( otherPlayer => {
-    self.physics.overlap(self.pig, otherPlayer, () => {
-      this.physics.velocityFromRotation(this.pig.rotation, -20000, this.pig.body.acceleration);
-    }, null, self);
-  });
-
-
+  
+    // #####################################
+    //  Handling Conflict with Other Piggies
+    // #####################################
+    this.otherPlayers.getChildren().forEach( otherPlayer => {
+      this.physics.collide(self.pig, otherPlayer, () => {
+        this.physics.velocityFromRotation(0, 10000);
+      }, null, self);
+    });
 }
 
 const addSelf = (self, playerInfo) => {
