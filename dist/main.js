@@ -3,7 +3,7 @@ const playerConfig = {
   ySize: 50,
   drag: 200,
   angularDrag: 200, 
-  maxVelocity: 1000,
+  maxVelocity: 10000,
 }
 
 
