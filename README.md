@@ -24,9 +24,9 @@ Phaser, WebGL, and Socket.IO were all new to me at the start of this sprint. I a
   - `git clone https://github.com/LudwigThePig/Ludwigs-Egg-Hunt.git`
 2. Change into the directory
   - `cd ludwigs-egg-hunt`
-3. Create a .env file and build it out as so,
+3. Create a .env file and build it out like so,
 ```
-PORT=<Your Prefferred Port>
+PORT=<Your Preferred Port>
 MONGO_CON=<Your Mongo Connection String>
 ```
 4. Run `npm start` and have fun!
